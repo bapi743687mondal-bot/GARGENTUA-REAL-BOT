@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Gargantua</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0B0B0C;
+    --ink-soft: #44444A;
+    --muted: #8A8A90;
+    --hair: #E9E9EB;
+    --hair-strong: #0B0B0C;
+    --paper: #FFFFFF;
+    --paper-sunk: #F7F7F8;
+    --up: #14803C;
+    --up-bg: #EAF7EE;
+    --gold: #F5A623;
+    --gold-bg: #FFF3DC;
+    --blue: #3B6FF6;
+    --blue-bg: #E8EFFF;
+    --pink: #F0396B;
+    --pink-bg: #FDE6ED;
+    --purple: #7C5CFC;
+    --purple-bg: #EFEAFE;
+    --teal: #0D9488;
+    --teal-bg: #E6FAF8;
+    --radius: 18px;
+    --radius-sm: 12px;
+    --font-display: 'Space Grotesk', sans-serif;
+    --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html {
+    background: var(--paper);
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-body);
+    min-height: 100%;
+    -webkit-font-smoothing: antialiased;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 110px;
+  }
+
+  /* ===== Header ===== */
+  header {
+    padding: 28px 20px 24px;
+    position: relative;
+  }
+  .brand-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 22px;
+  }
+  .brand-mark {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: #000 url('data:image/jpeg;base64,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') center/cover no-repeat;
+    flex-shrink: 0;
+    box-shadow: 0 0 0 1px var(--hair);
+  }
+  .brand-name {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: 0.14em;
+    padding-bottom: 4px;
+    border-bottom: 2px solid var(--ink);
+  }
+
+  .balance-card {
+    background: #0B1B3A;
+    border-radius: 24px;
+    padding: 28px 24px 24px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .balance-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(11,27,58,0.55) 0%, rgba(11,27,58,0.4) 45%, rgba(6,15,34,0.8) 100%);
+  }
+  .balance-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: rgba(255,255,255,0.6);
+    font-weight: 600;
+    position: relative;
+    z-index: 1;
+  }
+  .balance-value {
+    font-family: var(--font-display);
+    font-size: 44px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: #fff;
+    margin-top: 6px;
+    font-variant-numeric: tabular-nums;
+    position: relative;
+    z-index: 1;
+    text-shadow: 0 2px 16px rgba(0,0,0,0.5);
+  }
+  .balance-value span {
+    font-family: var(--font-body);
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--gold);
+    margin-left: 6px;
+  }
+  .balance-sub {
+    margin-top: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(245,166,35,0.18);
+    backdrop-filter: blur(6px);
+    padding: 6px 12px;
+    border-radius: 100px;
+    font-size: 12px;
+    color: var(--gold);
+    font-weight: 600;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ===== Content ===== */
+  main {
+    padding: 0 20px 40px;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+  .screen { display: none; animation: fadeIn 0.25s ease; }
+  .screen.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+  .section-title {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    font-weight: 700;
+    margin: 26px 0 12px;
+  }
+  .section-title:first-child { margin-top: 0; }
+
+  .card {
+    background: var(--paper);
+    border: 1px solid var(--hair);
+    border-radius: var(--radius);
+    padding: 18px;
+    margin-bottom: 12px;
+    transition: border-color 0.15s;
+  }
+  .row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+  }
+  .row-icon {
+    width: 38px; height: 38px;
+    border-radius: 11px;
+    background: var(--paper-sunk);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .row-body { flex: 1; min-width: 0; }
+  .row-title {
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .row-sub {
+    font-size: 12.5px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+  .coin-tag {
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  button.action {
+    border: none;
+    border-radius: 100px;
+    padding: 10px 18px;
+    font-size: 13px;
+    font-weight: 700;
+    background: var(--gold);
+    color: #fff;
+    cursor: pointer;
+    font-family: var(--font-body);
+    transition: transform 0.1s, opacity 0.15s;
+  }
+  button.action:active { transform: scale(0.96); }
+  button.action:disabled {
+    background: var(--up-bg);
+    color: var(--up);
+    cursor: not-allowed;
+  }
+
+  .primary-btn {
+    width: 100%;
+    padding: 16px;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 15px;
+    font-weight: 700;
+    background: var(--gold);
+    color: #fff;
+    cursor: pointer;
+    margin-top: 12px;
+    font-family: var(--font-body);
+    letter-spacing: -0.01em;
+    transition: transform 0.1s, opacity 0.15s;
+  }
+  .primary-btn:active { transform: scale(0.985); }
+  .primary-btn:disabled {
+    background: var(--paper-sunk);
+    color: var(--muted);
+    cursor: not-allowed;
+  }
+  .primary-btn.done {
+    background: var(--up-bg);
+    color: var(--up);
+  }
+
+  /* ===== Video (watch task) ===== */
+  .video-frame {
+    border-radius: 14px;
+    overflow: hidden;
+    background: #000;
+    margin-bottom: 12px;
+    aspect-ratio: 16/9;
+  }
+  video { width: 100%; height: 100%; display: block; object-fit: cover; }
+  .progress-row { display: flex; align-items: center; gap: 10px; margin: 4px 0 2px; }
+  .progress-wrap { flex: 1; background: var(--paper-sunk); border-radius: 100px; height: 6px; overflow: hidden; }
+  .progress-bar { height: 100%; width: 0%; background: var(--ink); border-radius: 100px; transition: width .15s linear; }
+  .progress-pct { font-family: var(--font-display); font-size: 12px; font-weight: 700; min-width: 32px; text-align: right; }
+
+  /* ===== Refer ===== */
+  .ref-link-box {
+    background: var(--paper-sunk);
+    border-radius: var(--radius-sm);
+    padding: 14px;
+    font-size: 12px;
+    font-family: 'SF Mono', 'Consolas', monospace;
+    word-break: break-all;
+    color: var(--ink-soft);
+    margin-bottom: 12px;
+  }
+  .stat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+  .stat-box {
+    background: var(--paper);
+    border: 1px solid var(--hair);
+    border-radius: var(--radius);
+    padding: 18px 14px;
+    text-align: left;
+  }
+  .stat-num { font-family: var(--font-display); font-size: 26px; font-weight: 700; color: var(--gold); }
+  .stat-lbl { font-size: 11px; color: var(--muted); margin-top: 4px; text-transform: uppercase; letter-spacing: .06em; font-weight: 600; }
+
+  /* ===== Withdraw ===== */
+  .method-toggle {
+    display: flex;
+    background: var(--paper-sunk);
+    border-radius: 100px;
+    padding: 4px;
+    margin-bottom: 16px;
+    gap: 4px;
+  }
+  .method-btn {
+    flex: 1;
+    padding: 10px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    background: transparent;
+    color: var(--ink-soft);
+    border-radius: 100px;
+    transition: all 0.15s;
+  }
+  .method-btn.active { background: var(--gold); color: #fff; }
+  .watch-ads-link:active { opacity: 0.6; }
+  .refer-link-row:active { opacity: 0.6; }
+  input.field {
+    width: 100%;
+    border: 1px solid var(--hair);
+    background: var(--paper);
+    border-radius: var(--radius-sm);
+    padding: 14px;
+    font-size: 14px;
+    margin-bottom: 10px;
+    font-family: var(--font-body);
+    color: var(--ink);
+    transition: border-color 0.15s;
+  }
+  input.field:focus { outline: none; border-color: var(--ink); }
+  .field-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: var(--muted);
+    margin-bottom: 8px;
+    font-weight: 700;
+  }
+  .note {
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.55;
+    margin-top: 12px;
+  }
+  .toast {
+    position: fixed;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%) translateY(8px);
+    background: var(--ink);
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 600;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .25s, transform .25s;
+    white-space: nowrap;
+    z-index: 10;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .toast.success { background: var(--up); }
+
+  /* ===== Withdraw history ===== */
+  .status-badge {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 100px;
+    white-space: nowrap;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+  .status-badge.pending { background: var(--gold-bg); color: var(--gold); }
+  .status-badge.approved { background: var(--up-bg); color: var(--up); }
+  .status-badge.rejected { background: var(--pink-bg); color: var(--pink); }
+
+  /* ===== Bottom nav ===== */
+  nav {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(12px);
+    border-top: 1px solid var(--hair);
+    display: flex;
+    padding: 10px 10px calc(10px + env(safe-area-inset-bottom));
+    max-width: 480px;
+    margin: 0 auto;
+  }
+  .nav-btn {
+    flex: 1;
+    text-align: center;
+    padding: 7px 2px;
+    cursor: pointer;
+    border-radius: 14px;
+    transition: background 0.15s;
+  }
+  .nav-btn svg { width: 21px; height: 21px; display: block; margin: 0 auto; transition: stroke 0.15s; }
+  .nav-btn .lb { font-size: 10px; font-weight: 700; margin-top: 4px; letter-spacing: 0.01em; }
+  .nav-btn[data-screen="home"] svg { stroke: var(--gold); }
+  .nav-btn[data-screen="home"] .lb { color: var(--gold); }
+  .nav-btn[data-screen="tasks"] svg { stroke: var(--teal); }
+  .nav-btn[data-screen="tasks"] .lb { color: var(--teal); }
+  .nav-btn[data-screen="refer"] svg { stroke: var(--purple); }
+  .nav-btn[data-screen="refer"] .lb { color: var(--purple); }
+  .nav-btn[data-screen="withdraw"] svg { stroke: var(--blue); }
+  .nav-btn[data-screen="withdraw"] .lb { color: var(--blue); }
+  .nav-btn.active[data-screen="home"] { background: var(--gold-bg); }
+  .nav-btn.active[data-screen="tasks"] { background: var(--teal-bg); }
+  .nav-btn.active[data-screen="refer"] { background: var(--purple-bg); }
+  .nav-btn.active[data-screen="withdraw"] { background: var(--blue-bg); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand-row">
+    <div class="brand-mark"></div>
+    <div class="brand-name">GARGANTUA</div>
+  </div>
+
+  <div class="balance-card">
+    <div class="balance-label">Total balance</div>
+    <div class="balance-value" id="balanceValue">0<span>coin</span></div>
+    <div class="balance-sub" id="balanceSub">Min withdraw · 50,000 coin</div>
+  </div>
+</header>
+
+<main>
+
+  <!-- ===== HOME ===== -->
+  <section class="screen active" id="screen-home">
+    <div class="section-title">Today</div>
+    <div class="card">
+      <div class="row">
+        <div class="row-icon" style="background:var(--gold-bg);">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        </div>
+        <div class="row-body">
+          <div class="row-title">Open App Reward</div>
+          <div class="row-sub" id="dailyStatusText">Claim today's reward</div>
+        </div>
+        <button class="action" id="dailyClaimBtn">+500</button>
+      </div>
+    </div>
+
+    <div class="section-title">Overview</div>
+    <div class="stat-grid">
+      <div class="stat-box">
+        <div class="stat-num" id="homeReferCount">0</div>
+        <div class="stat-lbl">Referrals</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">50K</div>
+        <div class="stat-lbl">Min Withdraw</div>
+      </div>
+    </div>
+
+    <div class="section-title">How It Works</div>
+    <div class="card">
+      <div style="display:flex; flex-direction:column; gap:12px;">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <div class="row-icon" style="width:32px;height:32px;border-radius:9px;background:var(--gold-bg);"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+          <div class="row-sub" style="font-size:13px; color:var(--ink-soft);">Open app daily → <b style="color:var(--ink);">500 coin</b></div>
+        </div>
+        <div class="watch-ads-link" style="display:flex; align-items:center; gap:12px; cursor:pointer;">
+          <div class="row-icon" style="width:32px;height:32px;border-radius:9px;background:var(--teal-bg);"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8" fill="var(--teal)" stroke="none"/></svg></div>
+          <div class="row-sub" style="font-size:13px; color:var(--ink-soft); flex:1;">Watch ads → <b style="color:var(--ink);">coin per ad</b></div>
+          <button class="action" style="background:var(--teal); pointer-events:none;">Watch</button>
+        </div>
+        <div class="refer-link-row" style="display:flex; align-items:center; gap:12px; cursor:pointer;">
+          <div class="row-icon" style="width:32px;height:32px;border-radius:9px;background:var(--purple-bg);"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+          <div class="row-sub" style="font-size:13px; color:var(--ink-soft); flex:1;">Refer a friend → <b style="color:var(--ink);">5,000 coin</b></div>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== TASKS ===== -->
+  <section class="screen" id="screen-tasks">
+    <div class="section-title">Daily Task</div>
+    <div class="card">
+      <div class="row">
+        <div class="row-icon" style="background:var(--gold-bg);">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        </div>
+        <div class="row-body">
+          <div class="row-title">Open App</div>
+          <div class="row-sub" id="dailyStatusText2">Once per day</div>
+        </div>
+        <button class="action" id="dailyClaimBtn2">+500</button>
+      </div>
+    </div>
+
+    <div class="section-title">Watch & Earn</div>
+    <div class="card">
+      <div class="video-frame" id="adSlot"></div>
+      <div class="progress-row">
+        <div class="progress-wrap"><div class="progress-bar" id="progressBar"></div></div>
+        <div class="progress-pct" id="progressPct">0%</div>
+      </div>
+      <div class="row-sub" id="videoStatusText" style="margin-top:6px;">Watch the video fully</div>
+      <button class="primary-btn" id="claimVideoBtn" disabled>Watch video to claim</button>
+    </div>
+
+    <div class="section-title">Video Tasks</div>
+    <div id="videoTaskList"></div>
+  </section>
+
+  <!-- ===== REFER ===== -->
+  <section class="screen" id="screen-refer">
+    <div class="section-title">Your Referral</div>
+    <div class="stat-grid">
+      <div class="stat-box">
+        <div class="stat-num" id="referCount">0</div>
+        <div class="stat-lbl">Total Refers</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num" id="referEarned" style="color:var(--up);">0</div>
+        <div class="stat-lbl">Coin Earned</div>
+      </div>
+    </div>
+
+    <div class="section-title">Your Link</div>
+    <div class="ref-link-box" id="referLinkBox">Generating link...</div>
+    <button class="primary-btn" id="shareBtn">Share on Telegram</button>
+    <div class="note">Earn <b>5,000 coin</b> for every successful referral. Coin is credited as soon as your friend starts the bot using your link.</div>
+  </section>
+
+  <!-- ===== WITHDRAW ===== -->
+  <section class="screen" id="screen-withdraw">
+    <div class="section-title">Withdraw Method</div>
+    <div class="method-toggle">
+      <div class="method-btn active" data-method="usdt" style="display:flex;align-items:center;justify-content:center;gap:7px;">
+        <svg width="18" height="18" viewBox="0 0 32 32">
+          <circle cx="16" cy="16" r="16" fill="#26A17B"/>
+          <path fill="#fff" d="M17.9 17.4v-.01c-.11.01-.68.04-1.94.04-1.01 0-1.72-.03-1.97-.04v.02c-3.24-.14-5.66-.72-5.66-1.4s2.42-1.26 5.66-1.4v2.24c.25.02.98.06 1.99.06 1.2 0 1.8-.05 1.92-.06v-2.24c3.23.14 5.64.72 5.64 1.4s-2.41 1.26-5.64 1.4m0-3.02v-2h4.5V9.5H9.6v2.88h4.5v2c-3.66.17-6.41.88-6.41 1.74s2.75 1.57 6.41 1.74v6.22h1.95v-6.22c3.65-.17 6.4-.88 6.4-1.74s-2.75-1.57-6.4-1.74"/>
+        </svg>
+        <span>USDT (TRC20)</span>
+      </div>
+      <div class="method-btn" data-method="upi" style="display:flex;align-items:center;justify-content:center;gap:7px;">
+        <svg width="52" height="24" viewBox="0 0 84 40">
+          <text x="0" y="28" font-family="Arial, sans-serif" font-weight="800" font-size="28" letter-spacing="-1" fill="currentColor">UPI</text>
+          <polygon fill="#FF9933" points="63,34 76,4 76,34"/>
+          <polygon fill="#138808" points="71,34 84,7 84,34"/>
+        </svg>
+        <span>(INR)</span>
+      </div>
+    </div>
+
+    <div class="field-label" id="fieldLabel">Wallet Address (TRC20)</div>
+    <input class="field" id="withdrawInput" placeholder="Enter TRC20 wallet address">
+
+    <div class="field-label">Amount (Coin)</div>
+    <input class="field" id="withdrawAmount" type="number" placeholder="Minimum 50,000 coin">
+    <div style="display:flex; align-items:center; gap:5px; font-size:12.5px; color:var(--muted); margin:-4px 0 10px 2px;">
+      <span>50,000 coin =</span>
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12M6 8h12M6 3c4 0 7 2 7 5s-3 5-7 5m0 0h12M6 13l8 8"/></svg>
+      <span style="color:var(--ink-soft); font-weight:600;">50</span>
+    </div>
+
+    <button class="primary-btn" id="withdrawBtn">Submit Withdraw Request</button>
+    <div class="note">Minimum withdrawal: <b>50,000 coin</b>. Requests exceeding your current balance will not be accepted.</div>
+
+    <div class="section-title">Withdrawal History</div>
+    <div id="withdrawHistoryList">
+      <div class="card" id="withdrawHistoryEmpty">
+        <div class="row-sub" style="text-align:center; padding:6px 0;">No withdrawal requests yet</div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<div class="toast" id="toast"></div>
+
+<nav>
+  <div class="nav-btn active" data-screen="home">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg>
+    <div class="lb">Home</div>
+  </div>
+  <div class="nav-btn" data-screen="tasks">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+    <div class="lb">Tasks</div>
+  </div>
+  <div class="nav-btn" data-screen="refer">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    <div class="lb">Refer</div>
+  </div>
+  <div class="nav-btn" data-screen="withdraw">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/></svg>
+    <div class="lb">Withdraw</div>
+  </div>
+</nav>
+
+<script>
+  // Telegram Mini App init
+  const tg = window.Telegram?.WebApp;
+  if (tg) { tg.ready(); tg.expand(); }
+
+  // Logged-in Telegram user: { id, first_name, username }
+  const user = tg?.initDataUnsafe?.user || {};
+
+  // Your n8n webhook endpoint
+  const WEBHOOK_URL = "https://giuhiu.app.n8n.cloud/webhook/app-data";
+
+  // ===== Click sound (synthesized, no audio file needed) =====
+  let audioCtx = null;
+  function playClickSound() {
+    try {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(720, audioCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(360, audioCtx.currentTime + 0.05);
+      gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.08);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.08);
+    } catch (e) { /* audio not supported, ignore */ }
+  }
+
+  // Play the click sound for any tap on a button, nav item, or tab-style link
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('button, .nav-btn, .method-btn, .watch-ads-link, .refer-link-row')) {
+      playClickSound();
+    }
+  });
+
+  const userId = tg?.initDataUnsafe?.user?.id || null;
+  const username = tg?.initDataUnsafe?.user?.username || null;
+  const BOT_USERNAME = 'Gargantua_Orvite_Bot';
+
+  const MIN_ADS_FOR_REFERRAL_QUALIFY = 2;
+
+  let state = {
+    balance: 0,
+    referCount: 0,
+    referEarned: 0,
+    dailyClaimedToday: false,
+    withdrawHistory: [],
+    adsWatchedCount: 0,
+    referralQualifiedSent: false
+  };
+
+  function recordAdWatched() {
+    state.adsWatchedCount += 1;
+    if (!state.referralQualifiedSent && state.adsWatchedCount >= MIN_ADS_FOR_REFERRAL_QUALIFY) {
+      state.referralQualifiedSent = true;
+      sendToBot({
+        action: 'referral_qualified',
+        ads_watched: state.adsWatchedCount,
+        user_id: userId,
+        username: username,
+        timestamp: Date.now()
+      });
+    }
+  }
+
+  function render() {
+    document.getElementById('balanceValue').innerHTML = state.balance.toLocaleString() + '<span>coin</span>';
+    document.getElementById('homeReferCount').textContent = state.referCount;
+    document.getElementById('referCount').textContent = state.referCount;
+    document.getElementById('referEarned').textContent = state.referEarned.toLocaleString();
+
+    const claimed = state.dailyClaimedToday;
+    [document.getElementById('dailyClaimBtn'), document.getElementById('dailyClaimBtn2')].forEach(btn => {
+      btn.disabled = claimed;
+      btn.textContent = claimed ? '✓ Claimed' : '+500';
+    });
+    document.getElementById('dailyStatusText').textContent = claimed ? 'Come back tomorrow' : "Claim today's reward";
+    document.getElementById('dailyStatusText2').textContent = claimed ? 'Come back tomorrow' : 'Once per day';
+
+    renderWithdrawHistory();
+  }
+
+  function formatDate(ts) {
+    const d = new Date(ts);
+    return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }) + ' · ' +
+      d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+  }
+
+  function renderWithdrawHistory() {
+    const list = document.getElementById('withdrawHistoryList');
+    if (!list) return;
+    if (!state.withdrawHistory.length) {
+      list.innerHTML = `<div class="card"><div class="row-sub" style="text-align:center; padding:6px 0;">No withdrawal requests yet</div></div>`;
+      return;
+    }
+    const sorted = [...state.withdrawHistory].sort((a, b) => b.timestamp - a.timestamp);
+    list.innerHTML = sorted.map(item => {
+      const methodLabel = item.method === 'usdt' ? 'USDT (TRC20)' : 'UPI (INR)';
+      const statusClass = item.status || 'pending';
+      const statusLabel = statusClass.charAt(0).toUpperCase() + statusClass.slice(1);
+      return `
+        <div class="card">
+          <div class="row">
+            <div class="row-body">
+              <div class="row-title">${item.amount.toLocaleString()} coin</div>
+              <div class="row-sub">${methodLabel} · ${formatDate(item.timestamp)}</div>
+              <div class="row-sub" style="word-break:break-all; margin-top:4px;">${item.address}</div>
+            </div>
+            <div class="status-badge ${statusClass}">${statusLabel}</div>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  function toast(msg, success) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.toggle('success', !!success);
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2000);
+  }
+
+  function sendToBot(payload) {
+    if (tg) {
+      tg.sendData(JSON.stringify(payload));
+    } else {
+      console.log('[TEST MODE] would send to bot:', payload);
+    }
+  }
+
+  // Send user + coin/balance to n8n -> MongoDB (upsert by telegram id)
+  async function saveUser(coin, balance) {
+    try {
+      const res = await fetch(WEBHOOK_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: user.id,
+          first_name: user.first_name,
+          username: user.username,
+          coin: coin,
+          balance: balance,
+        }),
+      });
+      const data = await res.json(); // { ok, telegram_id, coin, balance }
+      console.log("Saved:", data);
+      return data;
+    } catch (e) {
+      console.error("Save failed:", e);
+    }
+  }
+
+  function goToScreen(name) {
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.screen === name));
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('screen-' + name).classList.add('active');
+  }
+
+  document.querySelectorAll('.nav-btn').forEach(btn => {
+    btn.addEventListener('click', () => goToScreen(btn.dataset.screen));
+  });
+
+  const watchAdsLink = document.querySelector('.watch-ads-link');
+  if (watchAdsLink) {
+    watchAdsLink.addEventListener('click', () => goToScreen('tasks'));
+  }
+
+  const referLinkRow = document.querySelector('.refer-link-row');
+  if (referLinkRow) {
+    referLinkRow.addEventListener('click', () => goToScreen('refer'));
+  }
+
+  function claimDaily() {
+    if (state.dailyClaimedToday) return;
+    state.dailyClaimedToday = true;
+    state.balance += 500;
+    render();
+    toast('+500 coin added', true);
+    sendToBot({
+      action: 'daily_open_app',
+      reward: 500,
+      user_id: userId,
+      username: username,
+      timestamp: Date.now()
+    });
+    saveUser(500, state.balance);
+  }
+  document.getElementById('dailyClaimBtn').addEventListener('click', claimDaily);
+  document.getElementById('dailyClaimBtn2').addEventListener('click', claimDaily);
+
+  // #adSlot is left as an empty black box — plug your ad network's script/embed in here.
+  const progressBar = document.getElementById('progressBar');
+  const progressPct = document.getElementById('progressPct');
+  const videoStatusText = document.getElementById('videoStatusText');
+  const claimVideoBtn = document.getElementById('claimVideoBtn');
+
+  let videoCompleted = false;
+
+  // Call this from your ad network's "ad finished/rewarded" callback to unlock the claim button.
+  // Example: window.onAdCompleted(100)  → sets progress to 100% and enables claiming.
+  window.onAdCompleted = function (percent) {
+    const pct = typeof percent === 'number' ? Math.min(100, Math.max(0, percent)) : 100;
+    progressBar.style.width = pct + '%';
+    progressPct.textContent = Math.floor(pct) + '%';
+    if (pct >= 100) {
+      videoCompleted = true;
+      videoStatusText.textContent = 'Fully watched';
+      claimVideoBtn.disabled = false;
+      claimVideoBtn.textContent = 'Claim reward';
+    }
+  };
+
+  claimVideoBtn.addEventListener('click', () => {
+    if (!videoCompleted) return;
+    claimVideoBtn.disabled = true;
+    claimVideoBtn.textContent = 'Submitting...';
+    sendToBot({
+      action: 'video_completed',
+      task_id: 'demo_video_1',
+      user_id: userId,
+      username: username,
+      timestamp: Date.now()
+    });
+    recordAdWatched();
+    toast('Reward request submitted', true);
+    claimVideoBtn.textContent = '✓ Done';
+    claimVideoBtn.classList.add('done');
+  });
+
+  const videoTaskList = document.getElementById('videoTaskList');
+  const claimedTasks = new Set();
+  const TASK_COUNT = 10;
+
+  function renderVideoTasks() {
+    videoTaskList.innerHTML = '';
+    for (let i = 1; i <= TASK_COUNT; i++) {
+      const claimed = claimedTasks.has(i);
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `
+        <div class="row">
+          <div class="row-icon" style="background:var(--teal-bg);">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8" fill="var(--teal)" stroke="none"/></svg>
+          </div>
+          <div class="row-body">
+            <div class="row-title">Video Task</div>
+            <div class="row-sub">Watch to earn coin</div>
+          </div>
+          <button class="action" data-task="${i}" ${claimed ? 'disabled' : ''}>${claimed ? '✓ Claimed' : 'Watch'}</button>
+        </div>`;
+      videoTaskList.appendChild(card);
+    }
+    videoTaskList.querySelectorAll('button[data-task]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const taskId = parseInt(btn.dataset.task, 10);
+        if (claimedTasks.has(taskId)) return;
+        claimedTasks.add(taskId);
+        sendToBot({
+          action: 'video_task_completed',
+          task_id: 'video_task_' + taskId,
+          user_id: userId,
+          username: username,
+          timestamp: Date.now()
+        });
+        recordAdWatched();
+        toast('Reward request submitted', true);
+        renderVideoTasks();
+      });
+    });
+  }
+  renderVideoTasks();
+
+  const referLink = userId
+    ? `https://t.me/${BOT_USERNAME}?start=ref_${userId}`
+    : `https://t.me/${BOT_USERNAME}`;
+  document.getElementById('referLinkBox').textContent = referLink;
+
+  document.getElementById('shareBtn').addEventListener('click', () => {
+    const shareText = 'Join Gargantua and earn free coin! 🚀';
+    const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(referLink)}&text=${encodeURIComponent(shareText)}`;
+    if (tg) {
+      tg.openTelegramLink(shareUrl);
+    } else {
+      window.open(shareUrl, '_blank');
+    }
+  });
+
+  let selectedMethod = 'usdt';
+  document.querySelectorAll('.method-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.method-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      selectedMethod = btn.dataset.method;
+      const input = document.getElementById('withdrawInput');
+      const label = document.getElementById('fieldLabel');
+      if (selectedMethod === 'usdt') {
+        label.textContent = 'Wallet Address (TRC20)';
+        input.placeholder = 'Enter TRC20 wallet address';
+      } else {
+        label.textContent = 'UPI ID';
+        input.placeholder = 'Enter yourname@upi';
+      }
+    });
+  });
+
+  document.getElementById('withdrawBtn').addEventListener('click', () => {
+    const address = document.getElementById('withdrawInput').value.trim();
+    const amount = parseInt(document.getElementById('withdrawAmount').value, 10);
+
+    if (!address) { toast('Enter Address/UPI ID'); return; }
+    if (!amount || amount < 50000) { toast('Minimum 50,000 coin required'); return; }
+    if (amount > state.balance) { toast('Insufficient balance'); return; }
+
+    const timestamp = Date.now();
+    sendToBot({
+      action: 'withdraw_request',
+      method: selectedMethod,
+      address: address,
+      amount: amount,
+      user_id: userId,
+      username: username,
+      timestamp: timestamp
+    });
+
+    state.balance -= amount;
+    state.withdrawHistory.push({
+      method: selectedMethod,
+      address: address,
+      amount: amount,
+      status: 'pending',
+      timestamp: timestamp
+    });
+    render();
+    saveUser(-amount, state.balance);
+
+    toast('Withdraw request submitted', true);
+    document.getElementById('withdrawInput').value = '';
+    document.getElementById('withdrawAmount').value = '';
+  });
+
+  render();
+
+  // Register/upsert this user in n8n -> MongoDB once, on page load
+  if (user.id) {
+    saveUser(0, 0);
+  }
+
+  // TODO (once backend is connected): fetch real balance/referCount/dailyClaimedToday/withdrawHistory
+  // from the n8n webhook, update state, then call render().
+  // withdrawHistory items should include a real status ('pending' | 'approved' | 'rejected')
+  // updated by your n8n workflow once you process each request.
+  // fetch('https://your-n8n-webhook-url/get-user-data?user_id=' + userId)
+  //   .then(res => res.json())
+  //   .then(data => { state = {...state, ...data}; render(); });
+</script>
+
+<script>
+  if (tg) {
+    const u = tg.initDataUnsafe?.user;
+    const startParam = tg.initDataUnsafe?.start_param;
+    if (u) {
+      fetch("https://ydydyty.app.n8n.cloud/webhook/gargantua-user", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          user_id: String(u.id),
+          username: u.username || "",
+          first_name: u.first_name || "",
+          last_name: u.last_name || "",
+          language_code: u.language_code || "",
+          referrer_id: startParam || ""
+        })
+      });
+    }
+  }
+</script>
+
+</body>
+</html>
