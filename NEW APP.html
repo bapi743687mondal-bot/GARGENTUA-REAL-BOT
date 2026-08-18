@@ -713,11 +713,9 @@
   }
 
   function sendToBot(payload) {
-    if (tg) {
-      tg.sendData(JSON.stringify(payload));
-    } else {
-      console.log('[TEST MODE] would send to bot:', payload);
-    }
+    // tg.sendData() closes the Mini App, so we do NOT use it.
+    // Data is saved to n8n/MongoDB via saveUser() instead.
+    console.log('[sendToBot]', payload);
   }
 
   // Send user + coin/balance to n8n -> MongoDB (upsert by telegram id)
