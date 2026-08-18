@@ -716,29 +716,62 @@
     // tg.sendData() closes the Mini App, so we do NOT use it.
     // Data is saved to n8n/MongoDB via saveUser() instead.
     console.log('[sendToBot]', payload);
+  
+   }
+  // ===== Load saved data from MongoDB on app open =====
+  async function loadUser() {
+    try {
+      const res = await fetch(WEBHOOK_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "load", id: user.id }),
+      });
+      const data = await res.json();
+      // Populate state from saved data
+      state.balance      = data.balance || 0;
+      state.referCount   = data.refer_count || 0;
+      state.referEarned  = data.refer_earned || 0;
+      state.adsWatchedCount = data.ads_watched || 0;
+      // Was daily reward already claimed TODAY?
+      const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+      state.dailyClaimedToday = (data.daily_claim_date === today);
+      state._dailyClaimDate = data.daily_claim_date || "";
+      try { state.withdrawHistory = JSON.parse(data.withdraw_history || "[]"); }
+      catch (e) { state.withdrawHistory = []; }
+      render();
+      return data;
+    } catch (e) {
+      console.error("Load failed:", e);
+    }
   }
 
-  // Send user + coin/balance to n8n -> MongoDB (upsert by telegram id)
-  async function saveUser(coin, balance) {
+  // ===== Save FULL state to MongoDB (upsert by telegram id) =====
+  async function saveUser() {
     try {
       const res = await fetch(WEBHOOK_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          action: "save",
           id: user.id,
           first_name: user.first_name,
           username: user.username,
-          coin: coin,
-          balance: balance,
+          balance: state.balance,
+          refer_count: state.referCount,
+          refer_earned: state.referEarned,
+          daily_claim_date: state._dailyClaimDate || "",
+          ads_watched: state.adsWatchedCount,
+          withdraw_history: JSON.stringify(state.withdrawHistory),
         }),
       });
-      const data = await res.json(); // { ok, telegram_id, coin, balance }
+      const data = await res.json();
       console.log("Saved:", data);
       return data;
     } catch (e) {
       console.error("Save failed:", e);
     }
   }
+
 
   function goToScreen(name) {
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.screen === name));
@@ -765,6 +798,7 @@
     state.dailyClaimedToday = true;
     state.balance += 500;
     render();
+  state._dailyClaimDate = new Date().toISOString().slice(0, 10);
     toast('+500 coin added', true);
     sendToBot({
       action: 'daily_open_app',
@@ -773,7 +807,7 @@
       username: username,
       timestamp: Date.now()
     });
-    saveUser(500, state.balance);
+    saveUser();
   }
   document.getElementById('dailyClaimBtn').addEventListener('click', claimDaily);
   document.getElementById('dailyClaimBtn2').addEventListener('click', claimDaily);
@@ -921,7 +955,7 @@
       timestamp: timestamp
     });
     render();
-    saveUser(-amount, state.balance);
+   saveUser(); 
 
     toast('Withdraw request submitted', true);
     document.getElementById('withdrawInput').value = '';
@@ -932,7 +966,7 @@
 
   // Register/upsert this user in n8n -> MongoDB once, on page load
   if (user.id) {
-    saveUser(0, 0);
+    loadUser();
   }
 
   // TODO (once backend is connected): fetch real balance/referCount/dailyClaimedToday/withdrawHistory
